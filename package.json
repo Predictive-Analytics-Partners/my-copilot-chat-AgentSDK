@@ -1,0 +1,22 @@
+{
+  "name": "copilot-chat-web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "os-browserify": "^0.3.0",
+    "process": "^0.11.10",
+    "rollup-plugin-polyfill-node": "^0.13.0",
+    "typescript": "~5.8.3",
+    "vite": "^7.0.0"
+  },
+  "dependencies": {
+    "@azure/msal-browser": "^4.14.0",
+    "@microsoft/agents-copilotstudio-client": "^0.4.3"
+  }
+}

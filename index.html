@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Copilot Studio Chat</title>
+    <style>
+      body{font-family:Segoe UI,Arial,sans-serif;max-width:640px;margin:2rem auto}
+      #chatArea{display:none}
+      #messages{border:1px solid #ccc;padding:1rem;height:320px;overflow-y:auto}
+      #row{display:flex;margin-top:1rem}
+      #userInput{flex:1;padding:.5rem}
+      button{padding:.5rem 1rem;margin-left:.5rem}
+      .you{color:#0066cc}.bot{color:#107c10}.sys{color:#666}
+    </style>
+  </head>
+  <body>
+    <h2>Copilot Studio Chat</h2>
+    <button id="signin">Sign in</button>
+
+    <div id="chatArea">
+      <div id="messages"></div>
+      <div id="row">
+        <input id="userInput" placeholder="Type a message" />
+        <button id="send">Send</button>
+      </div>
+    </div>
+
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
