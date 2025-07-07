@@ -25,3 +25,6 @@ dist-ssr
 dist/        
 node_modules/
 .env            # if you keep IDs there
+dist/        
+node_modules/
+.env            # if you keep IDs there
