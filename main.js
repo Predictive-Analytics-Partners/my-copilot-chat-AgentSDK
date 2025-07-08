@@ -15,7 +15,7 @@ import { CopilotStudioClient } from "@microsoft/agents-copilotstudio-client";
 /*  2.  Your Copilot Studio & Entra IDs                               */
 /* ------------------------------------------------------------------ */
 const settings = {
-  environmentId: "Agent ID",
+  environmentId: "Env ID",
   agentIdentifier: "Agent Schema ",
   tenantId: "Tenant ID",
   appClientId: "client ID"
