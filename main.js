@@ -21,6 +21,9 @@ const settings = {
   appClientId: "0115e105-20c3-4c8d-b654-1a4ef1da448d"       // AppClientID from Entra App registration
 };
 const scopes = ["https://api.powerplatform.com/.default"];
+const copilotScopes = ["https://api.powerplatform.com/CopilotStudio.Copilots.Invoke"];
+const powerBiScopes = ["https://analysis.windows.net/powerbi/api/.default"];
+
 
 /* ------------------------------------------------------------------ */
 /*  3.  MSAL setup (v 3+)                                             */
@@ -39,6 +42,8 @@ const msalInstance = new PublicClientApplication({
 /* ------------------------------------------------------------------ */
 let copilotClient;
 let conversationId;
+let powerBiToken; // Store PowerBI token separately
+
 
 /* ---------------------- tiny DOM helpers -------------------------- */
 function add(cls, text) {
@@ -55,27 +60,66 @@ function add(cls, text) {
 /* ------------------------------------------------------------------ */
 async function signIn() {
   try {
-    const { accessToken } = await msalInstance.loginPopup({
-      scopes,
+    console.log("Starting sign-in process...");
+    
+    // Step 1: Get Copilot Studio token
+    console.log("Requesting Copilot Studio scopes:", copilotScopes);
+    const copilotAuthResult = await msalInstance.loginPopup({
+      scopes: copilotScopes,
       prompt: "select_account"
     });
 
-    copilotClient = new CopilotStudioClient(settings, accessToken);
+    console.log("Copilot Studio auth successful, token acquired");
 
+    // Step 2: Get PowerBI token silently (since user is already signed in)
+    console.log("Requesting PowerBI scopes:", powerBiScopes);
+    try {
+      const powerBiAuthResult = await msalInstance.acquireTokenSilent({
+        scopes: powerBiScopes,
+        account: copilotAuthResult.account
+      });
+      powerBiToken = powerBiAuthResult.accessToken;
+      console.log("PowerBI token acquired silently");
+    } catch (silentError) {
+      console.log("Silent acquisition failed, requesting PowerBI token via popup");
+      const powerBiAuthResult = await msalInstance.acquireTokenPopup({
+        scopes: powerBiScopes,
+        account: copilotAuthResult.account
+      });
+      powerBiToken = powerBiAuthResult.accessToken;
+      console.log("PowerBI token acquired via popup");
+    }
+
+    // Step 3: Create Copilot client with Copilot Studio token
+    console.log("Creating Copilot client with settings:", {
+      ...settings,
+      appClientId: "REDACTED"  // Don't log sensitive info
+    });
+
+    copilotClient = new CopilotStudioClient(settings, copilotAuthResult.accessToken);
+
+    console.log("Starting conversation...");
     const startAct = await copilotClient.startConversationAsync(true);
     conversationId = startAct.conversation.id;
+    console.log("Conversation started:", conversationId);
 
     document.getElementById("signin").style.display = "none";
     document.getElementById("chatArea").style.display = "block";
 
-    add("sys", "Signed in! Suggested actions:");
+    add("sys", "Signed in! Both Copilot Studio and PowerBI tokens acquired.");
+    add("sys", "Suggested actions:");
     startAct.suggestedActions?.actions.forEach(a => add("bot", a.value));
   } catch (e) {
-    console.error(e);
-    alert("Sign-in failed – see console for details.");
+    console.error("Detailed auth error:", {
+      name: e.name,
+      message: e.message,
+      errorCode: e.errorCode,
+      subError: e.subError,
+      correlationId: e?.correlationId
+    });
+    alert(`Sign-in failed: ${e.message}`);
   }
 }
-
 /* ------------------------------------------------------------------ */
 /*  6.  Send a message                                                */
 /* ------------------------------------------------------------------ */
@@ -88,9 +132,13 @@ async function sendMessage() {
 
   add("you", text);
   box.value = "";
-
-  const replies = await copilotClient.askQuestionAsync(text, conversationId);
-  replies.forEach(({ text: t }) => t && add("bot", t));
+  try {
+    const replies = await copilotClient.askQuestionAsync(text, conversationId);
+    replies.forEach(({ text: t }) => t && add("bot", t));
+  } catch (error) {
+    console.error("Error sending message:", error);
+    add("sys", "Error: " + error.message);
+  }
 }
 
 /* ------------------------------------------------------------------ */
