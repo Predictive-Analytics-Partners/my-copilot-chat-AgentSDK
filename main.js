@@ -15,7 +15,7 @@ import { CopilotStudioClient } from "@microsoft/agents-copilotstudio-client";
 /*  2.  Your Copilot Studio & Entra IDs                               */
 /* ------------------------------------------------------------------ */
 const settings = {
-  environmentId: "a40337c2-25ad-43e3-9d2f-32f6f1ffa83d",
+  environmentId: "Default-a40337c2-25ad-43e3-9d2f-32f6f1ffa83d",
   agentIdentifier: "cr2d1_csvAgent",                    // From CP Studio metadata
   tenantId: "a40337c2-25ad-43e3-9d2f-32f6f1ffa83d",
   appClientId: "0e330ded-9915-413f-9d0c-f32975f24ab3"       // AppClientID from Entra App registration
