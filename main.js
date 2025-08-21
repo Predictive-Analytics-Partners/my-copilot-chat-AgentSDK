@@ -15,10 +15,10 @@ import { CopilotStudioClient } from "@microsoft/agents-copilotstudio-client";
 /*  2.  Your Copilot Studio & Entra IDs                               */
 /* ------------------------------------------------------------------ */
 const settings = {
-  environmentId: "Env ID",
-  agentIdentifier: "Agent Schema ",
-  tenantId: "Tenant ID",
-  appClientId: "client ID"
+  environmentId: "Default-a40337c2-25ad-43e3-9d2f-32f6f1ffa83d",
+  agentIdentifier: "cr2d1_insightsAgent",                    // From CP Studio metadata
+  tenantId: "a40337c2-25ad-43e3-9d2f-32f6f1ffa83d",
+  appClientId: "0115e105-20c3-4c8d-b654-1a4ef1da448d"       // AppClientID from Entra App registration
 };
 const scopes = ["https://api.powerplatform.com/.default"];
 
